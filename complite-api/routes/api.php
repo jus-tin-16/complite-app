@@ -5,3 +5,5 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 
 Route::get('/account', [AccountController::class, 'index']);
+
+Route::post('/login', [AccountController::class, 'loginUser']);

@@ -6,135 +6,185 @@ import {
     View, 
     StyleSheet,
     SafeAreaView,
-    FlatList
+    FlatList,
+    Image,
+    Modal,
+    Pressable,
+    Platform,
+    Dimensions,
+    Alert
   } from "react-native";
-import { Link } from 'expo-router';
-import axios from 'axios';
+import { router } from 'expo-router';
+import { loginUser } from '../utils/database';
 
 export default function Index() {
-  const [student, setStudents] = useState();
-  const[isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState(''); 
+  const [isLogVisible, setIsLogVisible] = useState(false);
 
-  useEffect(()=>{
-    async function getAllStudent(){
-      try {
-        const student = await axios.get('http://10.0.2.2:8000/api/account');
-        console.log(student.data);
-        setStudents(student.data);
-      } catch (error) {
-        console.log(error);
-      }
+
+  const loginSubmit = async () => {
+    if (!username || !password){
+      Alert.alert('Error', 'Please fill out the required fields.');
+      return;
     }
-    getAllStudent(); 
-  }, []);
 
-  if (isLoggedIn) {
-    return (
-      <SafeAreaView>
-        <View style={styles.container}>
-          <View style={styles.header}>  
-            <Link href="/studDashboard" style={styles.button}>
-              Go to About screen
-            </Link>
-          </View>
-          <View style={
-            {
-              flex: 2,
-              backgroundColor: 'yellow',
-            }}
-          >
-            <TouchableOpacity 
-              style={styles.loginButton} 
-              onPress={() => setIsLoggedIn(false)}
-            >
-              <Text style={styles.label}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </SafeAreaView>
-    )
+    try {
+      const response = await loginUser(username, password);
+      if(response){
+        Alert.alert('Success', 'Nice');
+        setUsername('');
+        setPassword('');
+        setIsLogVisible(false);
+        router.navigate('/(tabs1)/studDashboard');
+      } else {
+        console.log(response);
+        Alert.alert('Error');
+      }
+    } catch (error) {
+
+    }
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.logo}>LOGO</Text>
-        <Text style={styles.label}>Email/Username</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Email/Username"
-        />
-        <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Password"
-          secureTextEntry={true}
-        />
-        <TouchableOpacity 
-          style={styles.loginButton} 
-          onPress={() => setIsLoggedIn(true)}
-        >
-          <Text style={styles.label}>Login</Text>
+      <View style={styles.upperContainer}>
+        <Text style={{
+            fontSize: 24,
+            fontWeight: '600'
+          }}
+        >Hello, Students!</Text>
+        <Image source={require('../assets/Robot.png')} style={styles.charImage} />
+        <Text style={{
+            fontSize: 32,
+            fontWeight: 'bold'
+          }}
+        >Welcome to COMPLITE</Text>
+      </View>
+      <Modal 
+        animationType="slide"
+        transparent={true}
+        visible={isLogVisible}
+        onRequestClose={() => {setIsLogVisible(!isLogVisible)}}
+      >
+        <View>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.header}>Login</Text>
+              <Text style={styles.inputLabel}>Username</Text>
+              <TextInput 
+                style={styles.inputUser}
+                placeholder="Enter Username" 
+                value={username}
+                onChangeText={setUsername}
+              />
+              <Text style={styles.inputLabel}>Password</Text>
+              <TextInput
+                style={styles.inputUser}
+                placeholder="Enter Password"
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity style={styles.loginButton} onPress={loginSubmit}>
+                <Text style={styles.buttonLabel}>Login</Text>
+              </TouchableOpacity>
+              <Pressable
+                onPress={() => setIsLogVisible(!isLogVisible)}>
+                <Text style={styles.button}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity style={styles.loginButton} onPress={() => setIsLogVisible(true) }>
+          <Text style={styles.buttonLabel}>Login</Text>
         </TouchableOpacity>
-        <FlatList
-          data={student}
-          renderItem={({item})=><Text style={styles.label}>{item.username}</Text>}
-        />
       </View>
     </SafeAreaView>
   );
 }
   
   const styles = StyleSheet.create({
-    container: {
-      flexDirection: 'column',
+    container: {  
       flex: 1,
+    },
+    upperContainer: {
+      flex: 4,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    bottomContainer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    loginButton: {
+      backgroundColor: 'blue',
+      marginHorizontal: 20,
+      marginVertical: 30,
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center'
+    },
+    buttonLabel: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: 'white' 
+    },
+    charImage: {
+      width: 200,
+      height:  200,
+    },
+    centeredView: {
+      height: Dimensions.get('window').height,
+      width: Dimensions.get('window').width,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalView: {
+      flex: 1,
+      margin: 20,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      padding: 35,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#171717',
+          shadowOffset: { width: -2, height: 4 },
+          shadowOpacity: 0.2,
+          shadowRadius: 3,
+        },
+        android: {
+          elevation: 5,
+          shadowColor: '#171717',
+        }
+      }),
     },
     header: {
-      flex: 1,
-      backgroundColor: 'red',
-    },
-    body: {
-      backgroundColor: 'yellow',
-    },
-    formContainer: {
-      width: '70%',
-      height: '50%',
-      backgroundColor: 'darkgrey',
-      padding: 20,
-      borderRadius: 20,
-      justifyContent: 'center',
-    },
-    logo: {
       textAlign: 'center',
       fontSize: 32,
       fontWeight: '600',
-      color: 'white',
       marginBottom: 10,
+    },
+    inputLabel: {
+      fontSize: 24,
+      fontWeight: '600',
+      marginVertical: 10,
+    },
+    inputUser:{
+      borderWidth: 2,
+      borderColor: 'blue',
+      padding: 10,
+      marginVertical: 5,
+      borderRadius: 5,
     },
     label: {
       fontSize: 16,
       fontWeight: '400',
       color: 'white',
     },
-    input: {
-      fontSize: 16,
-      color: 'gray',
-      backgroundColor: 'white',
-      marginBottom: 20,
-      padding: 10,
-      borderRadius: 10,
-    },
-    loginButton: {
-      backgroundColor: 'brown',
-      width: '30%',
-      alignItems: 'center',
-      padding: 10,
-      alignSelf: 'center',
-    },
     button: {
-      fontSize: 20,
-      textDecorationLine: 'underline',
-      color: '#fff',
+      textAlign: 'center',
+      padding: 10,
     },
 });
