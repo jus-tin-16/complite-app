@@ -12,6 +12,7 @@ class Account extends Model
     protected $fillable = [
         'username',
         'password',
+        'accountType',
     ];
 
     protected $guarded =[

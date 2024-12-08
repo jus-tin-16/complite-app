@@ -26,7 +26,7 @@ class AccountController extends Controller
             $verify = (($password) == ($password2));
             if ($verify == 1) {
                 http_response_code(200);
-                $val = ['message' => 'Login successfully!'];
+                $val = ['message' => 'Login successfully!', []];
                 return response()->json($val);
             }
             /*if (password_verify($data->password, $password)){

@@ -19,7 +19,7 @@ class CreateAccountsTable extends Migration
             $table->string('password');
             $table->enum('accountType', ['Student', 'Instructor', 'Admin']);
             $table->enum('status', ['Active', 'Inactive'])->default('Active');
-            $table->timestamps();
+            $table->timestamp('dateTime')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

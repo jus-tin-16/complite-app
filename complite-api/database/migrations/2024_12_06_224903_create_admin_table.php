@@ -23,7 +23,7 @@ class CreateAdminTable extends Migration
             $table->string('email', 50);
             $table->enum('sex', ['Male', 'Female']);
             $table->date('birthDate');
-            $table->string('profilePhoto');
+            $table->string('profilePhoto')->nullable();
         });
     }
 
