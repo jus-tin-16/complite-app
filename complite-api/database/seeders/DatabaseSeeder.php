@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             EnrollSection::class,
             LessonSeeder::class,
             ActivitySeeder::class,
-            ContentSeeder::class
+            ContentSeeder::class,
+            ReportSeeder::class
         ]);
     }
 }
