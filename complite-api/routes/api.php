@@ -10,6 +10,10 @@ Route::post('/login', [AccountController::class, 'loginUser']);
 
 Route::post('/profile', [AccountController::class,'getProfile']);
 
+Route::post('/updatestudent', [AccountController::class,'updateStudentAccount']);
+
+Route::post('/updateinstructor', [AccountController::class,'updateInstructorAccount']);
+
 Route::post('/instructorprofile', [AccountController::class,'instructorProfile']);
 
 Route::post('/sendreport', [ReportController::class, 'sendReport']);
@@ -21,3 +25,9 @@ Route::post('/addsection', [SectionController::class, 'addSection']);
 Route::post('/enrolledsection', [SectionController::class, 'getEnrolledSection']);
 
 Route::post('/enroll', [SectionController::class, 'enrollSection']);
+
+Route::post('/unenroll', [SectionController::class, 'unEnroll']);
+
+Route::post('/remove', [SectionController::class, 'removeSection']);
+
+Route::post('/record', [AccountController::class, 'putPoints']);

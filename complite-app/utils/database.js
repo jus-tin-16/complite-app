@@ -75,3 +75,53 @@ export const enrollToSection = async (sectionCode, student_id) => {
         throw error.response?.data || error.message;
     }
 };
+
+export const updateStudent = async (account_id, username, password) => {
+    try {
+        console.log(account_id);
+        const response = await axios.post('http://10.0.2.2:8000/api/updatestudent', {account_id, username, password});
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const updateInstructor = async (account_id, username, password) => {
+    try {
+        console.log(account_id);
+        const response = await axios.post('http://10.0.2.2:8000/api/updateinstructor', {account_id, username, password});
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const unenroll = async (student_id, enrollId) => {
+    try {
+        console.log(student_id, enrollId);
+        const response = await axios.post('http://10.0.2.2:8000/api/unenroll', {student_id, enrollId});
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const deleteSection = async (section_id) => {
+    try {
+        console.log(section_id);
+        const response = await axios.post('http://10.0.2.2:8000/api/remove', {section_id});
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const pointing = async (student_id, points) => {
+    try {
+        console.log(student_id);
+        const response = await axios.post('http://10.0.2.2:8000/api/record', {student_id, points});
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};

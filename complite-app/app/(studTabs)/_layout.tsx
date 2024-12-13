@@ -6,7 +6,7 @@ export default function studTabLayout() {
   return (
     <Tabs screenOptions={{
         headerShown : false,
-        tabBarActiveTintColor: '#ffd33d',
+        tabBarActiveTintColor: '#E93023',
     }}
     >
       <Tabs.Screen name="studDashboard" options={{ 

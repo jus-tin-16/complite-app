@@ -42,7 +42,7 @@ class SectionController extends Controller
         $data = json_decode(file_get_contents("php://input"));
 
         $sql = DB::table('enroll_section')
-            ->select('section.sectionName', 'section.dateTime', 'instructor_profile.firstName', 'instructor_profile.middleName', 'instructor_profile.lastName')
+            ->select('section.sectionName', 'section.sectionID', 'enroll_section.enrollID','section.dateTime', 'instructor_profile.firstName', 'instructor_profile.middleName', 'instructor_profile.lastName')
             ->join('section','enroll_section.section_ID','=','section.sectionID')
             ->join('instructor_profile','section.instructor_ID','=','instructor_profile.instructorID')
             ->where('student_ID', $data)
@@ -75,5 +75,50 @@ class SectionController extends Controller
             }
         }
         return $sql;
+    }
+
+    public function unEnroll(){
+        $data = json_decode(file_get_contents("php://input"));
+
+        $sql = DB::table('enroll_section')->where('enrollID', $data->enrollId)
+            ->where('student_ID', $data->student_id)->delete();
+
+            if ($sql){
+                $code = http_response_code(200);
+                $val = [
+                    'success' => $code, 
+                    'message' => 'Unenroll Successfully!', 
+                ];
+                return response()->json($val);
+            } else {
+                $val = [
+                    'message' => 'Failed to unenroll section.', 
+                ];
+                return response()->json($val);
+            }
+
+        return $data;
+    }
+
+    public function removeSection(){
+        $data = json_decode(file_get_contents("php://input"));
+
+        $sql = DB::table('section')->where('sectionID', $data->section_id)->delete();
+
+            if ($sql){
+                $code = http_response_code(200);
+                $val = [
+                    'success' => $code, 
+                    'message' => 'Remove Section Successfully!', 
+                ];
+                return response()->json($val);
+            } else {
+                $val = [
+                    'message' => 'Failed to remove section.', 
+                ];
+                return response()->json($val);
+            }
+
+        return $data;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Account;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AccountController extends Controller
 {
@@ -159,6 +160,74 @@ class AccountController extends Controller
             http_response_code(400);
             $val = [
                 'message' => 'Cannot retrieve data, please try to log in again.',
+            ];
+            return response()->json($val);
+        }
+    }
+
+    public function updateStudentAccount() {
+        $data = json_decode(file_get_contents("php://input"));
+
+        $sql = DB::table('accounts')->where('accountID', $data->account_id)
+            ->update(['username' => $data->username, 'password' => Hash::make($data->password)]);
+
+        if ($sql){
+            http_response_code(400);
+            $val = [
+                'success' => 200, 
+                'message' => 'Updated Username and Password'
+            ];
+            return response()->json($val);
+        } else {
+            http_response_code(400);
+            $val = [
+                'message' => 'Cannot Update Details, please try again later.',
+            ];
+            return response()->json($val);
+        }
+
+        return $data;
+    }
+
+    public function updateInstructorAccount() {
+        $data = json_decode(file_get_contents("php://input"));
+
+        $sql = DB::table('accounts')->where('accountID', $data->account_id)
+            ->update(['username' => $data->username, 'password' => Hash::make($data->password)]);
+
+        if ($sql){
+            http_response_code(400);
+            $val = [
+                'success' => 200, 
+                'message' => 'Updated Username and Password'
+            ];
+            return response()->json($val);
+        } else {
+            http_response_code(400);
+            $val = [
+                'message' => 'Cannot Update Details, please try again later.',
+            ];
+            return response()->json($val);
+        }
+    }
+
+    public function putPoints() {
+        $data = json_decode(file_get_contents("php://input"));
+
+        $sql = DB::table('student_profile')->where('studentID', $data->student_id)
+            ->update(['points' => $data->points]);
+
+        if ($sql){
+            http_response_code(400);
+            $val = [
+                'success' => 200, 
+                'message' => 'Points recorded'
+            ];
+            return response()->json($val);
+        } else {
+            http_response_code(400);
+            $val = [
+                'message' => 'Points not recorded',
             ];
             return response()->json($val);
         }

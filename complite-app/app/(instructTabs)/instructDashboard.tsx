@@ -17,6 +17,14 @@ function generateRandomString(length) {
     return result;
 };
 
+const COLORS = {
+    background: '#F5F4F6',    // White Smoke
+    primary: '#FCD200',       // Gold
+    accent: '#E93023',        // Chili Red
+    warning: '#3EB183',       // Mint
+    text: '#232946',          // Space Cadet
+};
+
 export default function instructDashboard() {
     const [sections, setSections] = useState([]);
     const [sectionName, setSectionName] = useState('');
@@ -89,8 +97,19 @@ export default function instructDashboard() {
 
     return (
         <View style={styles.container}>
-            <Text>List of Section</Text>
+            <View style={styles.header}>
+                <Text style={styles.headerText}>Sections Dashboard</Text>
+                <TouchableOpacity 
+                    style={styles.addButton}
+                    onPress={() => setIsModalVisible(true)}
+                >
+                    <Ionicons name="add-circle" size={24} color={COLORS.primary} />
+                    <Text style={styles.addButtonText}>Add Section</Text>
+                </TouchableOpacity>
+            </View>
+
             <FlatList
+                style={styles.list}
                 data={sections}
                 renderItem={({ item }) => <Section section={item} />}
                 keyExtractor={(item, index) => index.toString()}
@@ -99,65 +118,101 @@ export default function instructDashboard() {
                 }
             />
 
-        <Modal 
-            animationType="fade"
-            transparent={true}
-            visible={isModalVisible}
-            onRequestClose={() => {
-                setIsModalVisible(!isModalVisible)
-            }}
-        >
-                <View style={styles.CenterView}>
-                <View style={styles.ModalView}>
-                    <TouchableOpacity onPress={() => setIsModalVisible(!isModalVisible)}>
-                    <Ionicons name="close-circle" size={24} color="black" />
-                    </TouchableOpacity>
-                    <Text>Report Form</Text>
-                    <TextInput editable value={sectionName} onChangeText={setSectionName} placeholder='Section Name' />
-                    <TextInput editable value={courseName} onChangeText={setCourseName} placeholder='Course Name' />
-                    <TextInput editable value={activityName} onChangeText={setActivityName} placeholder='Activity Name' />
-                    <TextInput
-                    editable
-                    multiline
-                    numberOfLines={10}
-                    maxLength={250}
-                    style={styles.textArea}
-                    placeholder="Course Description"
-                    value={courseDescription}
-                    onChangeText={setCourseDescription}
-                    />
-                    <View >
-                        <Text>{actDate.toUTCString()}</Text>
-                    </View>
-
-                    {/* The button that used to trigger the date picker */}
-                    {!isPickerShow && (
-                        <View >
-                            <Button title="Show Date Picker" color="purple" onPress={() => showPicker('date')} />
-                            <Button title="Show Time Picker" color="purple" onPress={() => showPicker('time')} />
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isModalVisible}
+                onRequestClose={() => setIsModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Add New Section</Text>
+                            <TouchableOpacity 
+                                onPress={() => setIsModalVisible(false)}
+                                style={styles.closeButton}
+                            >
+                                <Ionicons name="close-circle" size={24} color={COLORS.accent} />
+                            </TouchableOpacity>
                         </View>
-                    )}
 
-                    {/* The date picker */}
-                    {isPickerShow && (
-                        <DateTimePicker
-                        value={actDate}
-                        mode={mode}
-                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                        is24Hour={true}
-                        onChange={onChange}
+                        <TextInput
+                            style={styles.input}
+                            value={sectionName}
+                            onChangeText={setSectionName}
+                            placeholder="Section Name"
+                            placeholderTextColor="#666"
                         />
-                    )}
-                    <TouchableOpacity onPress={() => createSection()}>
-                        <Text>Add Section</Text>
-                    </TouchableOpacity>
-                </View>
+                        <TextInput
+                            style={styles.input}
+                            value={courseName}
+                            onChangeText={setCourseName}
+                            placeholder="Course Name"
+                            placeholderTextColor="#666"
+                        />
+                        <TextInput
+                            style={styles.input}
+                            value={activityName}
+                            onChangeText={setActivityName}
+                            placeholder="Activity Name"
+                            placeholderTextColor="#666"
+                        />
+                        <TextInput
+                            style={styles.textArea}
+                            multiline
+                            numberOfLines={4}
+                            maxLength={250}
+                            value={courseDescription}
+                            onChangeText={setCourseDescription}
+                            placeholder="Course Description"
+                            placeholderTextColor="#666"
+                        />
+
+                        <View style={styles.dateContainer}>
+                            <Text style={styles.dateLabel}>Selected Date:</Text>
+                            <Text style={styles.dateValue}>
+                                {actDate.toLocaleDateString()}
+                            </Text>
+                        </View>
+
+                        <View style={styles.pickerButtons}>
+                            {!isPickerShow && (
+                                <>
+                                    <TouchableOpacity
+                                        style={[styles.pickerButton, { marginRight: 10 }]}
+                                        onPress={() => showPicker('date')}
+                                    >
+                                        <Text style={styles.pickerButtonText}>Select Date</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.pickerButton}
+                                        onPress={() => showPicker('time')}
+                                    >
+                                        <Text style={styles.pickerButtonText}>Select Time</Text>
+                                    </TouchableOpacity>
+                                </>
+                            )}
+                        </View>
+
+                        {isPickerShow && (
+                            <DateTimePicker
+                                value={actDate}
+                                mode={mode}
+                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                is24Hour={true}
+                                onChange={onChange}
+                            />
+                        )}
+
+                        <TouchableOpacity
+                            style={styles.submitButton}
+                            onPress={createSection}
+                        >
+                            <Text style={styles.submitButtonText}>Create Section</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </Modal>
-
-            <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-                <Text>Add Section</Text>
-            </TouchableOpacity>
         </View>
     );
 };
@@ -165,30 +220,129 @@ export default function instructDashboard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: COLORS.background,
     },
-    CenterView: {
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 16,
+        backgroundColor: COLORS.text,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: COLORS.background,
+    },
+    list: {
         flex: 1,
+        padding: 16,
+    },
+    addButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: COLORS.background,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 20,
+    },
+    addButtonText: {
+        color: COLORS.text,
+        marginLeft: 8,
+        fontWeight: '600',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    ModalView: {
-        margin: 20,
-        backgroundColor: 'white',
+    modalContent: {
+        backgroundColor: COLORS.background,
         borderRadius: 20,
-        padding: 35,
-        width: 350,
+        padding: 20,
+        width: '90%',
+        maxWidth: 500,
+        elevation: 5,
         shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-    },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 5,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: COLORS.text,
+    },
+    closeButton: {
+        padding: 4,
+    },
+    input: {
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        color: COLORS.text,
     },
     textArea: {
-        padding: 10,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 12,
         borderWidth: 1,
+        borderColor: '#ddd',
+        minHeight: 100,
+        textAlignVertical: 'top',
+        color: COLORS.text,
+    },
+    dateContainer: {
+        marginVertical: 12,
+    },
+    dateLabel: {
+        fontSize: 16,
+        color: COLORS.text,
+        marginBottom: 4,
+    },
+    dateValue: {
+        fontSize: 16,
+        color: COLORS.text,
+        fontWeight: '500',
+    },
+    pickerButtons: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginVertical: 12,
+    },
+    pickerButton: {
+        backgroundColor: COLORS.text,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 8,
+        flex: 1,
+    },
+    pickerButtonText: {
+        color: COLORS.background,
+        textAlign: 'center',
+        fontWeight: '600',
+    },
+    submitButton: {
+        backgroundColor: COLORS.primary,
+        padding: 16,
+        borderRadius: 8,
+        marginTop: 20,
+    },
+    submitButtonText: {
+        color: COLORS.text,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
 });
