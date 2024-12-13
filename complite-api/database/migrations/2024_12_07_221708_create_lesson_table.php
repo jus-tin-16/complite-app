@@ -15,8 +15,8 @@ class CreateLessonTable extends Migration
     {
         Schema::create('lesson', function (Blueprint $table) {
             $table->id('lessonID');
-            $table->string('lessonPicture')->nullable();
-            $table->text('lessonContent')->nullable();
+            $table->json('lessonPicture')->nullable();
+            $table->json('lessonContent')->nullable();
         });
     }
 

@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
-    public function index(){
-        return Account::all();
-    }
-
     public function loginUser(Request $request){
         $data = json_decode(file_get_contents("php://input"));
 
@@ -21,46 +17,84 @@ class AccountController extends Controller
             $username = $sql->username;
             $password = $sql->password;
             $account = $sql->accountType;
+            $isActive = $sql->status;
+
             if (password_verify($data->password, $password)) {
-                if ($account == 'Student'){
+                if ($account == 'Student' && $isActive == 'Active'){
+                    $stmt = DB::table('student_profile')->where('account_ID', $id)->first();
+                    $stid = $stmt->studentID;
                     $code = http_response_code(200);
                     $val = [
                         'success' => $code, 
                         'message' => 'Login successfully!', 
                         'user' => array(
                             'id' => $id,
+                            'studentId' => $stid,
                             'username' => $username,
                             'password' => $password,
-                            'account-type' => $account,
+                            'accountType' => $account,
                         ),
+                    ];
+                    return response()->json($val);
+                } elseif ($account == 'Instructor' && $isActive == 'Active') {
+                    $stmt2 = DB::table('instructor_profile')->where('account_ID', $id)->first();
+                    $inid = $stmt2->instructorID;
+                    $code = http_response_code(200);
+                    $val = [
+                        'success' => $code, 
+                        'message' => 'Login successfully!', 
+                        'user' => array(
+                            'id' => $id,
+                            'instructorId' => $inid,
+                            'username' => $username,
+                            'password' => $password,
+                            'accountType' => $account,
+                        ),
+                    ];
+                    return response()->json($val);
+                } elseif ($account == 'Student' && $isActive == 'Inactive') {
+                    $val = [
+                        'message' => 'Account is Inactive. Please report to the admin.'
+                    ];
+                    return response()->json($val);
+                } elseif ($account == 'Instructor' && $isActive == 'Inactive') {
+                    $val = [
+                        'message' => 'Account is Inactive. Please report to the admin.'
+                    ];
+                    return response()->json($val);
+                } else {
+                    $val = [
+                        'message' => 'Invalid credentials.'
                     ];
                     return response()->json($val);
                 }
             } else {
-                $code = http_response_code(400);
+                http_response_code(400);
                 $val = [
-                    'error' => $code,
-                    'message' => 'Invalid credentials'
+                    'message' => 'Invalid credentials.'
                 ];
                 return response()->json($val);
             }
-            /*if (password_verify($data->password, $password)){
-                return response();
-            } else {
-                
-            }*/
+        } else {
+            http_response_code(400);
+            $val = [
+                'message' => 'Unable to login. Data is incomplete'
+            ];
+            return response()->json($val);
         }
     }
 
     public function getProfile(){
         $data = json_decode(file_get_contents("php://input"));
-        $sql = DB::table('student_profile')->where('account_ID', $data)->first();
+
+        $sql = DB::table('student_profile')->where('studentID', $data)->first();
+
         if ($sql) {
             $code = http_response_code(200);
-            $studId = $sql->studentID;
+            $acc_id = $sql->account_ID;
             $fname = $sql->firstName;
             $lname = $sql->lastName;
-            $mname = $sql->middleName[0];
+            $mname = $sql->middleName;
             $bdate = $sql->birthDate;
             $mail = $sql->email;
             $pfp = $sql->profilePhoto;
@@ -69,8 +103,8 @@ class AccountController extends Controller
             $g = $sql->grades;
             $val = [
                 'success' => $code, 
-                'data' => array(
-                    'studentID'=> $studId,
+                'student' => array(
+                    'accountid' => $acc_id,
                     'firstname' => $fname,
                     'lastname' => $lname,
                     'middlename' => $mname,
@@ -81,6 +115,50 @@ class AccountController extends Controller
                     'totalpoints' => $p,
                     'totalgrades' => $g,
                 ),
+            ];
+            return response()->json($val);
+        } else {
+            http_response_code(400);
+            $val = [
+                'message' => 'Cannot retrieve data, please try to log in again.',
+            ];
+            return response()->json($val);
+        }
+    }
+
+    public function instructorProfile() {
+        $data = json_decode(file_get_contents("php://input"));
+
+        $sql = DB::table('instructor_profile')->where('instructorID', $data)->first();
+
+        if ($sql) {
+            $code = http_response_code(200);
+            $acc_id = $sql->account_ID;
+            $fname = $sql->firstName;
+            $lname = $sql->lastName;
+            $mname = $sql->middleName;
+            $bdate = $sql->birthDate;
+            $mail = $sql->email;
+            $pfp = $sql->profilePhoto;
+            $s = $sql->sex;
+            $val = [
+                'success' => $code, 
+                'instructor' => array(
+                    'accountid' => $acc_id,
+                    'firstname' => $fname,
+                    'lastname' => $lname,
+                    'middlename' => $mname,
+                    'email' => $mail,
+                    'birthdate' => $bdate,
+                    'sex' => $s,
+                    'profilePhoto' => $pfp,
+                ),
+            ];
+            return response()->json($val);
+        } else {
+            http_response_code(400);
+            $val = [
+                'message' => 'Cannot retrieve data, please try to log in again.',
             ];
             return response()->json($val);
         }

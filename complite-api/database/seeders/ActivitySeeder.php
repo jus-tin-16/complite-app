@@ -16,7 +16,7 @@ class ActivitySeeder extends Seeder
     {
         $activityContent = [
             [
-                'activityQuestions'=>'What is a computer?',
+                'activityQuestions'=>  'What is a computer?',
                 'activityChoices'=> json_encode(['A Food', 'A Animal', 'An Object', 'A Machine']),
                 'activityKey' => 'A Machine',
                 'activityPicture' => 'Robot.png'

@@ -8,33 +8,72 @@ use Illuminate\Support\Facades\DB;
 
 class SectionController extends Controller
 {
-    public function getSection(){
+    public function getSectionList() {
         $data = json_decode(file_get_contents("php://input"));
 
-        $sql = DB::table('enroll_section')
-            ->join('section', 'enroll_section.section_ID','=','section.sectionID')
-            ->join('instructor_profile', 'section.instructor_ID','=','instructor_profile.instructorID')
-            ->select('section.sectionID','section.sectionName','instructor_profile.firstName', 'instructor_profile.lastName', 'instructor_profile.middleName', 'instructor_profile.sex')
-            ->where('student_ID', $data)
-            ->get();
-            
-        $data = $sql;
+        $sql = DB::table('section')
+            ->where('instructor_ID', $data)->get();
 
-        return $data;
+        return $sql;
     }
 
-    public function getSectionDetails(){
+    public function addSection() {
         $data = json_decode(file_get_contents("php://input"));
 
-        $lookthis = ['student_ID',]
+        $sql = DB::insert('INSERT INTO section (instructor_ID, courseName, courseDescription, activityName, sectionName, sectionCode, actDueDate) 
+            VALUES (?,?,?,?,?,?,?)', [$data->instructor_id, $data->course_name, $data->course_description, $data->activityname, $data->sectionname, $data->sectioncode, $data->actduedate]);
+
+        if ($sql) {
+            $code = http_response_code(200);
+            $val = [
+                    'success' => $code, 
+                    'message' => 'Section Added!', 
+                ];
+            return response()->json($val);
+        } else {
+            $val = [
+                    'message' => 'Failed to sent create section.', 
+                ];
+            return response()->json($val);
+        }
+    }
+
+    public function getEnrolledSection() {
+        $data = json_decode(file_get_contents("php://input"));
 
         $sql = DB::table('enroll_section')
-            ->join('section', 'enroll_section.section_ID','=','section.sectionID')
-            ->join('instructor_profile', 'section.instructor_ID','=','instructor_profile.instructorID')
-            ->select('section.sectionID','section.sectionName','instructor_profile.firstName', 'instructor_profile.lastName', 'instructor_profile.middleName', 'instructor_profile.sex')
+            ->select('section.sectionName', 'section.dateTime', 'instructor_profile.firstName', 'instructor_profile.middleName', 'instructor_profile.lastName')
+            ->join('section','enroll_section.section_ID','=','section.sectionID')
+            ->join('instructor_profile','section.instructor_ID','=','instructor_profile.instructorID')
             ->where('student_ID', $data)
             ->get();
+        
+        return $sql;
+    }
 
-        return $sql->sectionName;
+    public function enrollSection() {
+        $data = json_decode(file_get_contents("php://input"));
+
+        $sql = DB::table('section')->where('sectionCode', $data->sectionCode)->first();
+
+        if ($sql){
+            $sql2 = DB::insert('INSERT INTO enroll_section (section_ID, student_ID) 
+                VALUES (?,?)', [$sql->sectionID, $data->student_id]);
+
+            if ($sql2){
+                $code = http_response_code(200);
+                $val = [
+                    'success' => $code, 
+                    'message' => 'Enrolled Successfully!', 
+                ];
+                return response()->json($val);
+            } else {
+                $val = [
+                    'message' => 'Failed to enroll section.', 
+                ];
+                return response()->json($val);
+            }
+        }
+        return $sql;
     }
 }
