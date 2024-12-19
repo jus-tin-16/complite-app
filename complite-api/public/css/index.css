@@ -1,0 +1,401 @@
+:root {
+    --WhiteSmoke: #F5F4F6;
+    --SpaceCadet: #232946;
+    --Gold: #FCD200;
+    --Mint: #3EB183;
+    --ChiliRed: #E93023;
+    --White:  #FFFFFF;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--WhiteSmoke);
+    color: var(--White);
+    line-height: 1.5;
+}
+
+.navbar {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: var(--White);
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--Gold);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+/* Header Styles */
+.header-bottom {
+    background-color: var(--SpaceCadet);
+    padding: 20px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 4;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.header-bottom.hide {
+    transform: translateY(-100%);
+}
+
+.container {
+    max-width: 1230px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.header-bottom .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo-container {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--White);
+}
+
+.logo-image {
+    height: 40px;
+    margin-right: 12px;
+}
+
+.logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.logo-text:hover {
+    color: var(--Gold);
+}
+
+
+.hero {
+    position: relative; /* Allows pseudo-elements to be positioned relative to this container */
+    background: url('../Images//lesson1.gif') no-repeat center center/cover; /* Adds the GIF background */
+    min-height: 100vh; /* Ensures the section fills the viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centers content horizontally and vertically */
+    overflow: hidden; /* Prevents overflow if the content extends beyond the section */
+    z-index: 0; /* Base layer for the section */
+}
+
+/* Add the gradient overlay */
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(128, 109, 0, 0), rgba(9, 0, 41, 0.534));
+    z-index: 1; /* Ensures the gradient is above the background but below content */
+    pointer-events: none; /* Ensures the gradient doesn't block interactions */
+}
+
+/* Style content inside the .hero */
+.hero .content {
+    position: relative; /* Keeps the content above the gradient */
+    z-index: 2; /* Ensures content appears above the gradient */
+    color: var(--White); /* Ensures text is visible over the background */
+    text-align: center;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    padding: 2rem 0;
+    position: relative; /* Ensures this layer stays above the gradient */
+    z-index: 2;
+}
+
+.hero-mascot {
+    flex-shrink: 0;
+}
+
+.robot-mascot {
+    width: 300px;
+    height: auto;
+    animation: float 3s ease-in-out infinite;
+}
+
+.hero-text-content {
+    flex-grow: 1;
+}
+
+.welcome-text {
+    font-size: 3.5rem;
+    color: var(--WhiteSmoke);
+    margin-bottom: -20px;
+    font-weight: 700;
+}
+
+.brand-name {
+    font-size: 5rem;
+    color: var(--Gold);
+    font-weight: 800;
+}
+
+.hero-description {
+    background-color: var(--Gold);
+    font-size: 1.5rem;
+    color: var(--SpaceCadet);
+    margin-bottom: 2rem;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--Gold);
+    color: var(--SpaceCadet);
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.125rem;
+    transition: transform 0.3s ease;
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+}
+
+.arrow {
+    font-size: 1.25rem;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .welcome-text {
+        font-size: 2.5rem;
+    }
+    
+    .brand-name {
+        font-size: 3.5rem;
+    }
+    
+    .robot-mascot {
+        width: 200px;
+    }
+}
+
+
+/* Cards Grid */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+.h2.section-title{
+    margin-top: 40px;
+    color: var(--SpaceCadet);
+}
+
+.lesson-card, .activity-card {
+    background-color: var(--Gold);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--SpaceCadet);
+    transition: all 0.3s ease-in-out;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-card:hover, .activity-card:hover {
+    transform: translateY(-5px);
+    background-color: var(--Mint);
+    color: var(--WhiteSmoke);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Footer */
+.footer {
+    background-color: var(--SpaceCadet);
+    color: var(--text-white);
+    padding: 60px 0 20px;
+    margin-top: 4rem;
+}
+
+.about-text{
+    margin-top: 10px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.footer-nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 8px;
+}
+
+.footer-link {
+    color: var(--WhiteSmoke);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: var(--Gold);
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--nav-bg);
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .navbar.active {
+        display: flex;
+    }
+
+    .hero-elements {
+        flex-direction: column;
+    }
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    color: black;
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: black;
+}
+
+#reportForm textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.submit-btn, .close-confirmation-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
