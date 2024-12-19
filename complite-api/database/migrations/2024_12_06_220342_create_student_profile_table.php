@@ -24,8 +24,8 @@ class CreateStudentProfileTable extends Migration
             $table->enum('sex', ['Male', 'Female']);
             $table->date('birthDate');
             $table->string('profilePhoto')->nullable();
-            $table->integer('points');
-            $table->float('grades');
+            $table->integer('points')->default(0);
+            $table->float('grades')->default(0);
         });
     }
 

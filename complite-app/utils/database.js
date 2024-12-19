@@ -125,3 +125,53 @@ export const pointing = async (student_id, points) => {
         throw error.response?.data || error.message;
     }
 };
+
+export const getSectionStudents = async (section_id) => {
+    try {
+        console.log(section_id);
+        const response = await axios.post('http://10.0.2.2:8000/api/sectionstudents', {section_id});
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const fetchLesson = async (lessonId) => {
+    try {
+        
+        const response = await axios.get(`http://10.0.2.2:8000/api/lessons/${lessonId}`);
+        
+        // Add better error handling
+        if (!response.data) {
+            throw new Error('No data received from server');
+        }
+        
+        return response.data;
+    } catch (error) {
+        // More detailed error handling
+        if (error.response) {
+            // Server responded with an error
+            throw new Error(`Server error: ${error.response.data.message || error.response.statusText}`);
+        } else if (error.request) {
+            // Request was made but no response received
+            throw new Error('No response received from server. Please check your connection.');
+        } else {
+            // Error in request setup
+            throw new Error(`Request error: ${error.message}`);
+        }
+    }
+};
+
+export const getActivities = async () => {
+    try {
+        const response = await axios.get('http://10.0.2.2:8000/api/activities');
+        console.log('API Response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error.response?.data || error.message);
+        return {
+            success: false,
+            message: error.response?.data?.message || error.message
+        };
+    }
+};

@@ -386,14 +386,6 @@ editButton: {
   borderRadius: 8,
   alignItems: 'center',
 },
-editButton: {
-  marginVertical: 2.5,
-  marginHorizontal: 20,
-  backgroundColor: COLORS.primary,
-  padding: 15,
-  borderRadius: 8,
-  alignItems: 'center',
-},
 inputBox: {
   borderWidth: 1,
   marginVertical: 5,

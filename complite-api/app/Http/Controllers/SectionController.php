@@ -121,4 +121,45 @@ class SectionController extends Controller
 
         return $data;
     }
+
+    public function getSectionStudents(Request $request)
+    {
+        try {
+            $section_id = $request->input('section_id');
+    
+            if (!$section_id) {
+                return response()->json(['error' => 'Section ID is required'], 400);
+            }
+    
+            // Check if the section exists in enroll_section
+            $sectionExists = DB::table('enroll_section')
+                ->where('section_ID', $section_id)
+                ->exists();
+    
+            if (!$sectionExists) {
+                return response()->json([], 200); // Return empty array if no students
+            }
+    
+            // Fetch students enrolled in the given section
+            $students = DB::table('enroll_section')
+                ->join('student_profile', 'enroll_section.student_ID', '=', 'student_profile.studentID')
+                ->where('enroll_section.section_ID', $section_id)
+                ->select(
+                    'student_profile.studentID as studentId', 
+                    'student_profile.firstName', 
+                    'student_profile.middleName', 
+                    'student_profile.lastName', 
+                    'student_profile.email'
+                )
+                ->get();
+    
+            return response()->json($students);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Could not retrieve enrolled students',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
